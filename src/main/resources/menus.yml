@@ -1,0 +1,86 @@
+# Slots are zero-based. Inventory rows are clamped to 1..6.
+main:
+  title: "&8Tus Colores"
+  rows: 5
+  decoration:
+    enabled: true
+    material: GRAY_STAINED_GLASS_PANE
+  rank:
+    slot: 20
+    material: NAME_TAG
+    name: "&6&lCOLOR DEL RANGO"
+    lore: ["", "&7Color actual:", "&f➥ {current}", "", "&eClick para cambiar."]
+  plus:
+    slot: 22
+    material: NETHER_STAR
+    name: "&e&lCOLOR DEL PLUS"
+    lore: ["", "&7Color actual:", "&f➥ {current}", "", "&eClick para cambiar."]
+  name:
+    slot: 24
+    material: PLAYER_HEAD
+    name: "&a&lCOLOR DEL NOMBRE"
+    lore: ["", "&7Color actual:", "&f➥ {current}", "", "&eClick para cambiar."]
+  preview:
+    slot: 31
+    material: PAPER
+    name: "&f&lVISTA PREVIA"
+    lore: ["", "{preview}"]
+
+selection-type:
+  title: "&8Seleccionar tipo de color"
+  rows: 5
+  preset:
+    slot: 20
+    material: LIME_DYE
+    name: "&a&lCOLORES PREDEFINIDOS"
+    lore: ["", "&7Selecciona un color del servidor.", "", "&7Actualmente: &f{current}", "{status}"]
+  rgb:
+    slot: 22
+    material: FIREWORK_STAR
+    name: "&b&lCOLOR RGB"
+    lore: ["", "&7Usa cualquier color HEX.", "", "&7Actualmente: &f{current}", "{status}"]
+  gradient:
+    slot: 24
+    material: SPECTRAL_ARROW
+    name: "&d&lGRADIENTE"
+    lore: ["", "&7Combina varios colores.", "", "&7Actualmente: &f{current}", "{status}"]
+  preview:
+    slot: 31
+    material: PLAYER_HEAD
+    name: "&f&lCOLOR ACTUAL"
+  back:
+    slot: 40
+    material: ARROW
+    name: "&cVolver"
+
+preset-menu:
+  title: "&8Colores predefinidos"
+  rows: 6
+  color-slots: [10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34]
+  previous: { slot: 45, material: ARROW, name: "&eAnterior" }
+  back: { slot: 49, material: BARRIER, name: "&cVolver" }
+  next: { slot: 53, material: ARROW, name: "&eSiguiente" }
+  locked-colors:
+    show: true
+    material: BARRIER
+
+gradient-menu:
+  title: "&8Crear gradiente"
+  rows: 6
+  color-slots: [19, 21, 23, 25, 31]
+  add: { slot: 33, material: LIME_DYE, name: "&a&l+ AÑADIR COLOR" }
+  preview: { slot: 40, material: PAPER, name: "&f&lVISTA PREVIA" }
+  confirm: { slot: 48, material: LIME_CONCRETE, name: "&a&lCONFIRMAR" }
+  cancel: { slot: 50, material: RED_CONCRETE, name: "&c&lCANCELAR" }
+
+confirmation:
+  title: "&8Confirmar color RGB"
+  rows: 3
+  preview: { slot: 13, material: FIREWORK_STAR, name: "&b&l{hex}" }
+  confirm: { slot: 11, material: LIME_CONCRETE, name: "&a&lCONFIRMAR" }
+  cancel: { slot: 15, material: RED_CONCRETE, name: "&c&lCANCELAR" }
+
+sounds:
+  open: { enabled: true, sound: BLOCK_NOTE_BLOCK_PLING, volume: 0.5, pitch: 1.2 }
+  select: { enabled: true, sound: ENTITY_EXPERIENCE_ORB_PICKUP, volume: 0.6, pitch: 1.5 }
+  denied: { enabled: true, sound: ENTITY_VILLAGER_NO, volume: 0.5, pitch: 1.0 }

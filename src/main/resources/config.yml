@@ -1,0 +1,76 @@
+# DuskRankColors 1.0.0 - main configuration
+config-version: 1
+
+settings:
+  validate-permissions: true
+
+permissions:
+  validate-selected-color: true
+  invalid-selection:
+    fallback-to-default: true
+
+defaults:
+  rank:
+    mode: PRESET
+    value: orange
+  plus:
+    mode: PRESET
+    value: lime
+  name:
+    mode: PRESET
+    value: white
+
+format:
+  plus-symbol: "+"
+  full: "{rank} {plus} {name}"
+  rank-wrapper: "{rank}"
+
+rank:
+  source: LUCKPERMS_PRIMARY_GROUP
+  static-text: "RANK"
+  groups:
+    default: "Jugador"
+    vip: "VIP"
+    vipplus: "VIP"
+    mvp: "MVP"
+    admin: "ADMIN"
+    owner: "OWNER"
+  fallback:
+    use-group-name: true
+    uppercase: true
+
+custom-colors:
+  rgb:
+    enabled: true
+    show-when-locked: true
+    categories:
+      rank: true
+      plus: true
+      name: true
+  gradient:
+    enabled: true
+    show-when-locked: true
+    categories:
+      rank: true
+      plus: true
+      name: true
+    min-colors: 2
+    max-colors: 5
+  input:
+    timeout-seconds: 60
+
+integrations:
+  placeholderapi: true
+  luckperms: true
+
+apply:
+  player-display-name:
+    enabled: false
+  player-list-name:
+    enabled: false
+
+gui:
+  interaction-cooldown-ms: 250
+
+debug:
+  enabled: false

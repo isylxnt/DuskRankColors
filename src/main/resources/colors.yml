@@ -1,0 +1,80 @@
+# Add, remove or reorder preset colors here. IDs are case-insensitive.
+colors:
+  orange:
+    enabled: true
+    display-name: "&6Naranja"
+    hex: "#FFB224"
+    legacy: "&6"
+    material: ORANGE_DYE
+    allowed: { rank: true, plus: true, name: true }
+    permissions:
+      rank: "duskrankcolors.rank.orange"
+      plus: "duskrankcolors.plus.orange"
+      name: "duskrankcolors.name.orange"
+  yellow:
+    enabled: true
+    display-name: "&eAmarillo"
+    hex: "#FAD763"
+    legacy: "&e"
+    material: YELLOW_DYE
+    allowed: { rank: true, plus: true, name: true }
+  gray:
+    enabled: true
+    display-name: "&7Gris"
+    hex: "#C1BEB3"
+    legacy: "&7"
+    material: GRAY_DYE
+  dark_red:
+    enabled: true
+    display-name: "&4Rojo Oscuro"
+    hex: "#FF2E43"
+    legacy: "&4"
+    material: RED_DYE
+  red:
+    enabled: true
+    display-name: "&cRojo"
+    hex: "#FC5464"
+    legacy: "&c"
+    material: RED_DYE
+  dark_green:
+    enabled: true
+    display-name: "&2Verde Oscuro"
+    hex: "#2BB70C"
+    legacy: "&2"
+    material: GREEN_DYE
+  lime:
+    enabled: true
+    display-name: "&aVerde Lima"
+    hex: "#71DD2F"
+    legacy: "&a"
+    material: LIME_DYE
+  light_lime:
+    enabled: true
+    display-name: "&aVerde Lima Claro"
+    hex: "#9AEC69"
+    legacy: "&a"
+    material: LIME_DYE
+  pink:
+    enabled: true
+    display-name: "&dRosa"
+    hex: "#FF55FF"
+    legacy: "&d"
+    material: PINK_DYE
+  aqua:
+    enabled: true
+    display-name: "&bAqua"
+    hex: "#55FFFF"
+    legacy: "&b"
+    material: LIGHT_BLUE_DYE
+  blue:
+    enabled: true
+    display-name: "&9Azul"
+    hex: "#5555FF"
+    legacy: "&9"
+    material: BLUE_DYE
+  white:
+    enabled: true
+    display-name: "&fBlanco"
+    hex: "#FFFFFF"
+    legacy: "&f"
+    material: WHITE_DYE
