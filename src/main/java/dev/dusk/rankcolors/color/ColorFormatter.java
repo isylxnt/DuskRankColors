@@ -65,8 +65,9 @@ public final class ColorFormatter {
     }
 
     private ColorDefinition resolvePreset(PlayerColorSelection selection) {
-        return registry.get(selection.presetId()).orElseGet(() -> new ColorDefinition("fallback", Component.text("White"),
-            "#FFFFFF", "&f", org.bukkit.Material.PAPER, java.util.EnumSet.allOf(ColorCategory.class), java.util.Map.of()));
+        return registry.get(selection.presetId()).orElseGet(() -> new ColorDefinition(selection.presetId(),
+            Component.text(selection.presetId()), "#FFFFFF", "&f", org.bukkit.Material.PAPER,
+            java.util.EnumSet.allOf(ColorCategory.class), java.util.Map.of()));
     }
 
     private String closestLegacy(TextColor color) {

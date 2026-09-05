@@ -23,7 +23,13 @@ public final class PaperSchedulerAdapter implements SchedulerAdapter {
 
     @Override
     public void runForPlayer(Player player, Runnable task) {
-        Bukkit.getScheduler().runTask(plugin, task);
+        if (Bukkit.isPrimaryThread()) task.run();
+        else Bukkit.getScheduler().runTask(plugin, task);
+    }
+
+    @Override
+    public void runGlobalLater(long delayTicks, Runnable task) {
+        Bukkit.getScheduler().runTaskLater(plugin, task, Math.max(1, delayTicks));
     }
 
     @Override

@@ -3,29 +3,26 @@ version: '${version}'
 main: dev.dusk.rankcolors.DuskRankColorsPlugin
 api-version: '1.20'
 folia-supported: true
-authors: [Dusk]
+authors: [isylxnt]
 description: Lightweight independent rank, plus and name colors.
-softdepend: [PlaceholderAPI, LuckPerms]
+softdepend: [PlaceholderAPI]
 commands:
   rankcolors:
-    description: Opens DuskRankColors or manages player colors.
-    usage: /rankcolors help
+    description: Opens DuskRankColors; administration is under /drc admin.
+    usage: /rankcolors
     aliases: [rc, drc, rankcolor]
-    permission: duskrankcolors.use
 permissions:
   duskrankcolors.use:
-    default: true
+    default: false
+    children:
+      duskrankcolors.gui: true
   duskrankcolors.gui:
-    default: true
+    default: false
   duskrankcolors.rank:
     default: true
   duskrankcolors.plus:
     default: true
   duskrankcolors.name:
-    default: true
-  duskrankcolors.reset:
-    default: true
-  duskrankcolors.preview:
     default: true
   duskrankcolors.rank.rgb:
     default: op
@@ -48,6 +45,8 @@ permissions:
       duskrankcolors.admin.info: true
       duskrankcolors.admin.rgb: true
       duskrankcolors.admin.gradient: true
+      duskrankcolors.admin.inspect: true
+      duskrankcolors.admin.validate: true
   duskrankcolors.admin.reload:
     default: op
   duskrankcolors.admin.set:
@@ -59,4 +58,8 @@ permissions:
   duskrankcolors.admin.rgb:
     default: op
   duskrankcolors.admin.gradient:
+    default: op
+  duskrankcolors.admin.inspect:
+    default: op
+  duskrankcolors.admin.validate:
     default: op

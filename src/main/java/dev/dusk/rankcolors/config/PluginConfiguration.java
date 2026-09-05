@@ -5,6 +5,7 @@ import dev.dusk.rankcolors.color.ColorMode;
 import dev.dusk.rankcolors.color.GradientDefinition;
 import dev.dusk.rankcolors.color.PlayerColorSelection;
 import dev.dusk.rankcolors.storage.GradientSerializer;
+import dev.dusk.rankcolors.api.DisplayContext;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.EnumMap;
@@ -31,15 +32,24 @@ public final class PluginConfiguration {
             String value = configs.config().getString(root + ".value", category == ColorCategory.NAME ? "white" : "orange");
             defaults.put(category, parseSelection(mode, value, min, max));
         }
+        EnumMap<DisplayContext, String> contexts = new EnumMap<>(DisplayContext.class);
+        for (DisplayContext context : DisplayContext.values()) {
+            String fallback = context == DisplayContext.NAMETAG ? "{rank}{plus}"
+                : configs.config().getString("format.full", "{rank}{plus} {name}");
+            contexts.put(context, configs.config().getString("format.contexts." + context.key(),
+                fallback));
+        }
         snapshot = new Snapshot(Map.copyOf(defaults), min, max,
             configs.config().getBoolean("settings.validate-permissions", true),
             configs.config().getBoolean("permissions.validate-selected-color", true),
             configs.config().getBoolean("permissions.invalid-selection.fallback-to-default", true),
+            Math.max(0, configs.config().getInt("settings.rank-refresh-ticks", 20)),
             Math.max(5, configs.config().getInt("custom-colors.input.timeout-seconds", 60)),
             Math.max(0, configs.config().getLong("gui.interaction-cooldown-ms", 250)),
             configs.config().getString("format.plus-symbol", "+"),
-            configs.config().getString("format.full", "{rank} {plus} {name}"),
+            configs.config().getString("format.full", "{rank}{plus} {name}"),
             configs.config().getString("format.rank-wrapper", "{rank}"),
+            Map.copyOf(contexts),
             configs.config().getBoolean("apply.player-display-name.enabled", false),
             configs.config().getBoolean("apply.player-list-name.enabled", false));
     }
@@ -65,9 +75,11 @@ public final class PluginConfiguration {
     public boolean validatePermissions() { return snapshot.validatePermissions; }
     public boolean validateStoredPermissions() { return snapshot.validateStoredPermissions; }
     public boolean fallbackInvalidSelection() { return snapshot.fallbackInvalidSelection; }
+    public int rankRefreshTicks() { return snapshot.rankRefreshTicks; }
     public String plusSymbol() { return snapshot.plusSymbol; }
     public String fullFormat() { return snapshot.fullFormat; }
     public String rankWrapper() { return snapshot.rankWrapper; }
+    public String contextFormat(DisplayContext context) { return snapshot.contextFormats.get(context); }
     public boolean applyDisplayName() { return snapshot.applyDisplayName; }
     public boolean applyPlayerListName() { return snapshot.applyPlayerListName; }
 
@@ -82,21 +94,6 @@ public final class PluginConfiguration {
         return configs.config().getBoolean("custom-colors." + mode.name().toLowerCase(Locale.ROOT) + ".show-when-locked", true);
     }
 
-    public String rankText(String group) {
-        String source = configs.config().getString("rank.source", "STATIC");
-        if (!"LUCKPERMS_PRIMARY_GROUP".equalsIgnoreCase(source)) {
-            return configs.config().getString("rank.static-text", "RANK");
-        }
-        if (group == null || group.isBlank()) return configs.config().getString("rank.static-text", "RANK");
-        String configured = configs.config().getString("rank.groups." + group.toLowerCase(Locale.ROOT));
-        if (configured != null) return configured;
-        if (!configs.config().getBoolean("rank.fallback.use-group-name", true)) {
-            return configs.config().getString("rank.static-text", "RANK");
-        }
-        return configs.config().getBoolean("rank.fallback.uppercase", true)
-            ? group.toUpperCase(Locale.ROOT) : group;
-    }
-
     public boolean integrationEnabled(String name) {
         return configs.config().getBoolean("integrations." + name.toLowerCase(Locale.ROOT), true);
     }
@@ -105,8 +102,9 @@ public final class PluginConfiguration {
 
     private record Snapshot(Map<ColorCategory, PlayerColorSelection> defaults, int minGradientColors,
                             int maxGradientColors, boolean validatePermissions, boolean validateStoredPermissions,
-                            boolean fallbackInvalidSelection, int inputTimeoutSeconds, long guiCooldownMillis,
-                            String plusSymbol, String fullFormat, String rankWrapper, boolean applyDisplayName,
+                            boolean fallbackInvalidSelection, int rankRefreshTicks, int inputTimeoutSeconds, long guiCooldownMillis,
+                            String plusSymbol, String fullFormat, String rankWrapper,
+                            Map<DisplayContext, String> contextFormats, boolean applyDisplayName,
                             boolean applyPlayerListName) {
     }
 }

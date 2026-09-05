@@ -35,7 +35,7 @@ public final class PlayerColorRepository {
         }
     }
 
-    public PlayerColorSettings load(Player player) {
+    public PlayerColorSettings load(Player player, PlayerColorSettings defaults) {
         PersistentDataContainer data = player.getPersistentDataContainer();
         EnumMap<ColorCategory, PlayerColorSelection> loaded = new EnumMap<>(ColorCategory.class);
         for (ColorCategory category : ColorCategory.values()) {
@@ -50,7 +50,7 @@ public final class PlayerColorRepository {
                     migrated = true;
                 }
             }
-            PlayerColorSelection selection = parse(modeValue, rawValue).orElse(configuration.defaultSelection(category));
+            PlayerColorSelection selection = parse(modeValue, rawValue).orElse(defaults.selection(category));
             loaded.put(category, selection);
             if (migrated) {
                 save(player, category, selection);

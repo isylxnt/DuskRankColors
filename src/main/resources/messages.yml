@@ -1,25 +1,89 @@
-prefix: "&8[&6DuskRankColors&8] "
-no-permission: "{prefix}&cNo tienes permiso."
-player-only: "{prefix}&cEste comando solo puede usarlo un jugador."
-player-not-found: "{prefix}&cEse jugador no está conectado."
-reloaded: "{prefix}&aConfiguración recargada."
-invalid-category: "{prefix}&cCategoría inválida. Usa rank, plus o name."
-invalid-color: "{prefix}&cEse color no existe o no está disponible."
-invalid-hex: "{prefix}&cEse HEX no es válido. Usa #RRGGBB."
-invalid-gradient: "{prefix}&cEse gradiente no es válido."
-color-locked: "{prefix}&cNo tienes acceso a ese color."
-mode-locked: "{prefix}&cNo tienes acceso a este tipo de color."
+# DuskRankColors messages
+#
+# Every command and chat-input response can be changed here.
+# Legacy colors (&a, &l) and HEX colors (&#9863E7) are supported.
+# {prefix} inserts the prefix below. Keep replacement tokens such as {player}
+# or {value} unless you intentionally want to hide that information.
+# Run /drc admin reload after saving your changes.
+
+# Used by every message that contains {prefix}.
+prefix: "&#9863E7⏵ DuskRankColors &8| "
+
+# General command errors.
+no-permission: "{prefix}&cYou do not have permission to use this command."
+player-only: "{prefix}&cOnly players can use this command."
+player-not-found: "{prefix}&cThat player is not online."
+reloaded: "{prefix}&aConfiguration reloaded."
+
+# Syntax shown when a command is incomplete or has invalid arguments.
+usage:
+  player: "{prefix}&cUsage: /rankcolors"
+  admin-namespace: "{prefix}&cAdministration is only available through /drc admin."
+  set: "{prefix}&cUsage: /drc admin set <player> <rank|plus|name> <preset>"
+  setrgb: "{prefix}&cUsage: /drc admin setrgb <player> <rank|plus|name> <#RRGGBB>"
+  setgradient: "{prefix}&cUsage: /drc admin setgradient <player> <rank|plus|name> <hex1> <hex2> [hex3...]"
+  reset: "{prefix}&cUsage: /drc admin reset <player> [rank|plus|name|all]"
+  inspect: "{prefix}&cUsage: /drc admin inspect <player>"
+  validate: "{prefix}&cUsage: /drc admin validate"
+# Administrative command output.
+admin:
+  usage:
+    title: "&6&lDuskRankColors &7- administration"
+    commands: "&e/drc admin <reload|info|inspect|validate|set|setrgb|setgradient|reset>"
+  info:
+    # Available tokens include {version}, {platform}, {server}, {status} and {count}.
+    title: "&6DuskRankColors &fv{version}"
+    platform: "&7Platform: &f{platform}"
+    server: "&7Server: &f{server}"
+    placeholderapi: "&7PlaceholderAPI: {status}"
+    colors: "&7Loaded colors: &f{count}"
+    ranks: "&7Loaded ranks: &f{count}"
+    cache: "&7Cached players: &f{count}"
+    status:
+      active: "&aActive"
+      inactive: "&cInactive"
+  inspect:
+    # /drc admin inspect <player>
+    # Available tokens: {player}, {id}, {display}, {priority}, {permission},
+    # {plus}, {bold}, {category}, {mode}, {value} and {context}.
+    title: "&6&lInspection: &f{player}"
+    none: "&8None"
+    rank: "&7Rank: &f{id} &8(&f{display}&8) &7Priority: &f{priority}"
+    permission: "&7Permission: &f{permission}"
+    flags: "&7Plus: &f{plus} &8| &7Bold: &f{bold}"
+    selection: "&7{category}: &f{mode} &8/ &f{value}"
+    context: "&7{context}: &f"
+  validate:
+    # /drc admin validate. Each issue includes the exact YAML path to fix.
+    title: "&6&lConfiguration validation &8| &c{errors} errors &8| &e{warnings} warnings"
+    clean: "{prefix}&aNo configuration problems were found."
+    issue: "{level} &8| &f{path} &8- &7{message}"
+    level:
+      error: "&cERROR"
+      warning: "&eWARNING"
+# Color-selection validation.
+invalid-category: "{prefix}&cInvalid category. Use rank, plus, or name."
+invalid-color: "{prefix}&cThat color does not exist or is unavailable."
+invalid-hex: "{prefix}&cThat HEX value is invalid. Use #RRGGBB."
+invalid-gradient: "{prefix}&cThat gradient is invalid."
+color-locked: "{prefix}&cYou do not have access to that color."
+mode-locked: "{prefix}&cYou do not have access to this color type."
+rank-restricted: "{prefix}&cYour current rank does not allow that color or mode."
+# Chat prompts used while entering RGB and gradient colors.
+# Players can type `cancel` to return without saving.
 input:
-  rgb: "{prefix}&7Escribe un color HEX. &fEjemplo: #FFB224 &7(cancelar/cancel)"
-  gradient: "{prefix}&7Escribe el nuevo HEX. &fEjemplo: #55FFFF &7(cancelar/cancel)"
-  cancelled: "{prefix}&cConfiguración cancelada."
-  expired: "{prefix}&cLa configuración ha expirado."
+  rgb: "{prefix}&7Enter a HEX color. &fExample: #FFB224 &7(cancel)"
+  gradient: "{prefix}&7Enter the new HEX value. &fExample: #55FFFF &7(cancel)"
+  cancelled: "{prefix}&cConfiguration cancelled."
+  expired: "{prefix}&cConfiguration has expired."
+# Successful selection messages.
 selected:
-  rank: "{prefix}&7Color del rango actualizado."
-  plus: "{prefix}&7Color del plus actualizado."
-  name: "{prefix}&7Color del nombre actualizado."
+  rank: "{prefix}&7Rank color updated."
+  plus: "{prefix}&7Plus color updated."
+  name: "{prefix}&7Name color updated."
+# Successful reset messages.
 reset:
-  rank: "{prefix}&7Color del rango restablecido."
-  plus: "{prefix}&7Color del plus restablecido."
-  name: "{prefix}&7Color del nombre restablecido."
-  all: "{prefix}&7Tus colores fueron restablecidos."
+  rank: "{prefix}&7Rank color reset."
+  plus: "{prefix}&7Plus color reset."
+  name: "{prefix}&7Name color reset."
+  all: "{prefix}&7All your colors were reset."

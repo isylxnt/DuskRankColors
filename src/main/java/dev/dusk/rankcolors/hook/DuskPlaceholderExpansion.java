@@ -1,5 +1,6 @@
 package dev.dusk.rankcolors.hook;
 
+import dev.dusk.rankcolors.api.DisplayContext;
 import dev.dusk.rankcolors.color.ColorCategory;
 import dev.dusk.rankcolors.color.ColorFormatter;
 import dev.dusk.rankcolors.color.PlayerColorSelection;
@@ -22,7 +23,7 @@ public final class DuskPlaceholderExpansion extends PlaceholderExpansion {
     }
 
     @Override public @NotNull String getIdentifier() { return "duskrankcolors"; }
-    @Override public @NotNull String getAuthor() { return "Dusk"; }
+    @Override public @NotNull String getAuthor() { return "isylxnt"; }
     @Override public @NotNull String getVersion() { return version; }
     @Override public boolean persist() { return true; }
 
@@ -36,6 +37,14 @@ public final class DuskPlaceholderExpansion extends PlaceholderExpansion {
         if (key.equals("plus")) return rendered.plusLegacy();
         if (key.equals("name")) return rendered.nameLegacy();
         if (key.equals("full") || key.equals("preview")) return rendered.fullLegacy();
+        if (key.equals("rank_id")) return rendered.rankId();
+        if (key.equals("rank_display")) return rendered.rankText();
+        if (key.equals("rank_priority")) return rendered.rankId().isBlank() ? "" : Integer.toString(rendered.rankPriority());
+        if (key.equals("rank_has_plus")) return Boolean.toString(rendered.rankHasPlus());
+        if (key.equals("rank_bold")) return Boolean.toString(rendered.rankBold());
+        for (DisplayContext context : DisplayContext.values()) {
+            if (key.equals(context.key())) return rendered.contextLegacy().getOrDefault(context, "");
+        }
         for (ColorCategory category : ColorCategory.values()) {
             String prefix = category.key() + "_";
             if (!key.startsWith(prefix)) continue;

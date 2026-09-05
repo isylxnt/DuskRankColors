@@ -1,14 +1,33 @@
-# DuskRankColors 1.0.0 - main configuration
-config-version: 1
+# DuskRankColors 1.0 - main configuration
+#
+# Edit this file while the server is stopped, or run /drc admin reload afterward.
+# You can check your changes with /drc admin validate.
+# Keep legacy colors such as "&a" inside quotes. HEX colors use "#RRGGBB".
+# Do not change config-version by hand; it is used for safe migrations.
+config-version: 3
 
+# General behavior.
 settings:
+  # When true, players need the category, preset and mode permissions.
+  # Set this to false only if every player should have access to everything.
   validate-permissions: true
 
+  # How often the plugin checks whether a player's rank permission changed.
+  # 20 ticks = about 1 second. Set this to 0 to disable automatic checks.
+  rank-refresh-ticks: 20
+
+# Controls what happens to a saved selection after a permission or rank change.
 permissions:
+  # Recheck saved colors when the player joins, changes rank or the plugin reloads.
   validate-selected-color: true
   invalid-selection:
+    # If the old choice is no longer allowed, restore the configured default.
     fallback-to-default: true
 
+# Starting selections. Modes: PRESET, RGB or GRADIENT.
+# PRESET values are IDs from colors.yml. RGB values use #RRGGBB.
+# A GRADIENT value looks like "#FF55FF,#55FFFF".
+# Rank and plus defaults are normally supplied by the player's rank below.
 defaults:
   rank:
     mode: PRESET
@@ -20,28 +39,86 @@ defaults:
     mode: PRESET
     value: white
 
+# Text formats used by placeholders and the optional built-in name application.
+# Available tokens: {rank}, {plus}, {name}.
 format:
+  # The character placed after ranks where plus: true.
   plus-symbol: "+"
-  full: "{rank} {plus} {name}"
+
+  # Used by %duskrankcolors_full% and %duskrankcolors_preview%.
+  full: "{rank}{plus} {name}"
+
+  # Wrap the rank without adding color codes here.
+  # Example: "[{rank}]" displays [VIP].
   rank-wrapper: "{rank}"
 
-rank:
-  source: LUCKPERMS_PRIMARY_GROUP
-  static-text: "RANK"
-  groups:
-    default: "Jugador"
-    vip: "VIP"
-    vipplus: "VIP"
-    mvp: "MVP"
-    admin: "ADMIN"
-    owner: "OWNER"
-  fallback:
-    use-group-name: true
-    uppercase: true
+  # Each external display can use a different layout.
+  # Their placeholders are %duskrankcolors_chat%, _tab, _nametag and _scoreboard.
+  contexts:
+    chat: "{rank}{plus} {name}"
+    tab: "{rank}{plus} {name}"
+    nametag: "{rank}{plus}"
+    scoreboard: "{rank}{plus} {name}"
 
+# Internal ranks
+#
+# A rank is assigned by permission, never by a permission-plugin group name.
+# The automatic permission is duskrankcolors.ranks.<id>.
+# Example: the vip+ entry uses duskrankcolors.ranks.vip+.
+# Add `permission: "server.rank.vip"` inside an entry to use a custom node.
+#
+# There is no default rank. A player without a matching permission shows only their name.
+# If several ranks match, the one with the highest priority wins.
+ranks:
+  vip:
+    # Text shown as the rank. Formatting colors come from color below.
+    display: VIP
+
+    # Any integer is valid. Keep some space between ranks for future additions.
+    priority: 10
+
+    # Accepts quoted legacy colors (&0 to &f), #RRGGBB or &#RRGGBB.
+    color: "&a"
+
+    # When false, the plus is hidden and its color button is not shown.
+    plus: false
+
+    # Empty means "use the rank color". It matters only when plus is true.
+    plus-color: ""
+
+    # Applies bold formatting to both the rank and its plus.
+    bold: true
+
+    # Optional restrictions for this rank.
+    # Omit a category to allow every mode. Use [] to allow none.
+    allowed-modes:
+      rank: [PRESET, RGB, GRADIENT]
+      plus: [PRESET, RGB, GRADIENT]
+      name: [PRESET, RGB, GRADIENT]
+    # These values are preset IDs from colors.yml.
+    # Omit a category to allow every preset. Use [] for none or ["*"] for all.
+    # Example: `rank: [orange, yellow]` limits the rank to those two presets.
+    allowed-colors:
+      rank: ["*"]
+      plus: ["*"]
+      name: ["*"]
+  vip+:
+    # A second example. Its higher priority makes it win over vip.
+    display: VIP
+    priority: 20
+    color: "&a"
+    plus: true
+    plus-color: "&6"
+    bold: true
+
+# RGB and gradient controls.
 custom-colors:
   rgb:
+    # Disabling a mode removes it from every category below.
     enabled: true
+
+    # Show the button as locked when the player lacks permission.
+    # When false, locked buttons are hidden instead.
     show-when-locked: true
     categories:
       rank: true
@@ -54,23 +131,31 @@ custom-colors:
       rank: true
       plus: true
       name: true
+    # Allowed number of gradient stops. The plugin clamps these to safe limits.
     min-colors: 2
     max-colors: 5
   input:
+    # Time allowed to enter a HEX color in chat before the request expires.
     timeout-seconds: 60
 
+# PlaceholderAPI is optional. Set this to false to disable the expansion even if installed.
 integrations:
   placeholderapi: true
-  luckperms: true
 
+# These options directly change Bukkit player names and may conflict with other plugins.
+# Leave them disabled when TAB, a chat plugin or a nametag plugin uses the placeholders.
 apply:
   player-display-name:
+    # Uses format.contexts.chat.
     enabled: false
   player-list-name:
+    # Uses format.contexts.tab.
     enabled: false
 
+# Prevents accidental double-clicks from opening several inventories at once.
 gui:
   interaction-cooldown-ms: 250
 
+# Reserved for extra diagnostic logging. Leave this off on a normal server.
 debug:
   enabled: false

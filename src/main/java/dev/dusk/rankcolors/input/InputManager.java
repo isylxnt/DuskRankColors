@@ -4,6 +4,7 @@ import dev.dusk.rankcolors.color.ColorCategory;
 import dev.dusk.rankcolors.color.PlayerColorSelection;
 import dev.dusk.rankcolors.config.MessageService;
 import dev.dusk.rankcolors.config.PluginConfiguration;
+import dev.dusk.rankcolors.config.SoundService;
 import dev.dusk.rankcolors.menu.MenuManager;
 import dev.dusk.rankcolors.scheduler.SchedulerAdapter;
 import dev.dusk.rankcolors.service.PlayerColorService;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.time.Instant;
 import java.util.List;
@@ -22,16 +24,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class InputManager implements Listener {
     private final PluginConfiguration configuration;
     private final MessageService messages;
+    private final SoundService sounds;
     private final SchedulerAdapter scheduler;
     private final PlayerColorService colors;
     private final Map<UUID, PendingColorInput> pending = new ConcurrentHashMap<>();
     private final Map<UUID, GradientDraft> drafts = new ConcurrentHashMap<>();
     private MenuManager menus;
 
-    public InputManager(PluginConfiguration configuration, MessageService messages, SchedulerAdapter scheduler,
+    public InputManager(PluginConfiguration configuration, MessageService messages, SoundService sounds, SchedulerAdapter scheduler,
                         PlayerColorService colors) {
         this.configuration = configuration;
         this.messages = messages;
+        this.sounds = sounds;
         this.scheduler = scheduler;
         this.colors = colors;
     }
@@ -45,6 +49,7 @@ public final class InputManager implements Listener {
             PendingColorInput.MenuReturn.COLOR_TYPE, expiration()));
         player.closeInventory();
         messages.send(player, "input.rgb");
+        sounds.play(player, "input");
     }
 
     public void requestGradientStop(Player player, GradientDraft draft, int index) {
@@ -53,6 +58,7 @@ public final class InputManager implements Listener {
             PendingColorInput.MenuReturn.GRADIENT_EDITOR, expiration()));
         player.closeInventory();
         messages.send(player, "input.gradient");
+        sounds.play(player, "input");
     }
 
     private void createPending(Player player, PendingColorInput value) {
@@ -61,19 +67,35 @@ public final class InputManager implements Listener {
         scheduler.runForPlayerLater(player, configuration.inputTimeoutSeconds() * 20L, () -> {
             if (pending.remove(uuid, value)) {
                 messages.send(player, "input.expired");
+                sounds.play(player, "cancel");
                 if (value.type() == PendingColorInput.InputType.GRADIENT_STOP) menus.openGradient(player, value.category());
                 else menus.openType(player, value.category());
             }
         });
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
     public void onChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         PendingColorInput input = pending.get(player.getUniqueId());
         if (input == null) return;
         event.setCancelled(true);
         String value = dev.dusk.rankcolors.util.Text.plain(event.message()).trim();
+        capture(player, input, value);
+    }
+
+    /** Compatibility path for chat plugins that still emit or bridge Bukkit's legacy chat event. */
+    @SuppressWarnings("deprecation")
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+    public void onLegacyChat(AsyncPlayerChatEvent event) {
+        Player player = event.getPlayer();
+        PendingColorInput input = pending.get(player.getUniqueId());
+        if (input == null) return;
+        event.setCancelled(true);
+        capture(player, input, event.getMessage().trim());
+    }
+
+    private void capture(Player player, PendingColorInput input, String value) {
         scheduler.runForPlayer(player, () -> handle(player, input, value));
     }
 
@@ -82,17 +104,20 @@ public final class InputManager implements Listener {
         if (!pending.remove(uuid, expected)) return;
         if (Instant.now().isAfter(expected.expiresAt())) {
             messages.send(player, "input.expired");
+            sounds.play(player, "cancel");
             reopen(player, expected);
             return;
         }
         if (value.equalsIgnoreCase("cancel") || value.equalsIgnoreCase("cancelar")) {
             messages.send(player, "input.cancelled");
+            sounds.play(player, "cancel");
             reopen(player, expected);
             return;
         }
         java.util.Optional<String> normalized = dev.dusk.rankcolors.color.HexColor.normalize(value);
         if (normalized.isEmpty()) {
             messages.send(player, "invalid-hex");
+            sounds.play(player, "denied");
             createPending(player, new PendingColorInput(expected.category(), expected.type(), expected.gradientIndex(),
                 expected.returnTo(), expiration()));
             return;

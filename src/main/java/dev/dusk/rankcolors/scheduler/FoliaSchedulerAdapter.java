@@ -64,9 +64,22 @@ public final class FoliaSchedulerAdapter implements SchedulerAdapter {
 
     @Override
     public void runForPlayer(Player player, Runnable task) {
+        runForPlayer(player, task, () -> { });
+    }
+
+    @Override
+    public void runForPlayer(Player player, Runnable task, Runnable retired) {
         Object scheduler = invoke(getEntityScheduler, player);
         invokeNamed(getEntityScheduler, scheduler, "execute", new Class<?>[]{Plugin.class, Runnable.class, Runnable.class, long.class},
-            plugin, task, null, 1L);
+            plugin, task, retired, 1L);
+    }
+
+    @Override
+    public void runGlobalLater(long delayTicks, Runnable task) {
+        Object scheduler = invoke(getGlobalScheduler, null);
+        Consumer<Object> consumer = ignored -> task.run();
+        invokeNamed(getGlobalScheduler, scheduler, "runDelayed", new Class<?>[]{Plugin.class, Consumer.class, long.class},
+            plugin, consumer, Math.max(1, delayTicks));
     }
 
     @Override

@@ -1,86 +1,161 @@
-# Slots are zero-based. Inventory rows are clamped to 1..6.
+# DuskRankColors menus and sounds
+#
+# Slots start at 0. In a three-row menu the valid slots are 0-26;
+# in a six-row menu they are 0-53. Rows are always clamped between 1 and 6.
+# Material and sound names must match Bukkit names for your server version.
+# Run /drc admin validate after editing this file.
+#
+# All item names and lore support legacy colors (&a, &l) and HEX colors
+# such as &#9863E7. Items are forced to non-italic text by the plugin.
+# Do not change menus-version manually.
+menus-version: 6
+
+# Main menu opened with /rankcolors.
 main:
-  title: "&8Tus Colores"
-  rows: 5
+  title: "&8Your Colors"
+  rows: 3
+
+  # Decoration fills every unused slot with the selected material.
+  # It is disabled here to keep the clean layout shown in the examples.
   decoration:
-    enabled: true
+    enabled: false
     material: GRAY_STAINED_GLASS_PANE
   rank:
-    slot: 20
+    # {current} is replaced with the player's actual selection and color.
+    slot: 10
     material: NAME_TAG
-    name: "&6&lCOLOR DEL RANGO"
-    lore: ["", "&7Color actual:", "&f➥ {current}", "", "&eClick para cambiar."]
+    name: "&6&lRANK COLOR"
+    lore: ["", "&7Current color:", "&f➥ {current}", "", "&eClick to change."]
   plus:
-    slot: 22
-    material: NETHER_STAR
-    name: "&e&lCOLOR DEL PLUS"
-    lore: ["", "&7Color actual:", "&f➥ {current}", "", "&eClick para cambiar."]
-  name:
-    slot: 24
-    material: PLAYER_HEAD
-    name: "&a&lCOLOR DEL NOMBRE"
-    lore: ["", "&7Color actual:", "&f➥ {current}", "", "&eClick para cambiar."]
-  preview:
-    slot: 31
-    material: PAPER
-    name: "&f&lVISTA PREVIA"
-    lore: ["", "{preview}"]
-
-selection-type:
-  title: "&8Seleccionar tipo de color"
-  rows: 5
-  preset:
-    slot: 20
-    material: LIME_DYE
-    name: "&a&lCOLORES PREDEFINIDOS"
-    lore: ["", "&7Selecciona un color del servidor.", "", "&7Actualmente: &f{current}", "{status}"]
-  rgb:
-    slot: 22
+    slot: 12
     material: FIREWORK_STAR
-    name: "&b&lCOLOR RGB"
-    lore: ["", "&7Usa cualquier color HEX.", "", "&7Actualmente: &f{current}", "{status}"]
-  gradient:
-    slot: 24
-    material: SPECTRAL_ARROW
-    name: "&d&lGRADIENTE"
-    lore: ["", "&7Combina varios colores.", "", "&7Actualmente: &f{current}", "{status}"]
-  preview:
-    slot: 31
+    name: "&e&lPLUS COLOR"
+    lore: ["", "&7Current color:", "&f➥ {current}", "", "&eClick to change."]
+  name:
+    # PLAYER_HEAD automatically uses the head of the player opening the menu.
+    slot: 14
     material: PLAYER_HEAD
-    name: "&f&lCOLOR ACTUAL"
-  back:
-    slot: 40
-    material: ARROW
-    name: "&cVolver"
+    name: "&a&lNAME COLOR"
+    lore: ["", "&7Current color:", "&f➥ {current}", "", "&eClick to change."]
+  preview:
+    # Each token below uses its matching format.contexts entry from config.yml.
+    # Available here: {preview}, {chat_preview}, {tab_preview},
+    # {nametag_preview}, {scoreboard_preview}.
+    slot: 16
+    material: WRITABLE_BOOK
+    name: "&f&lPREVIEW"
+    lore:
+      - ""
+      - "&7Chat: {chat_preview}"
+      - "&7TAB: {tab_preview}"
+      - "&7Nametag: {nametag_preview}"
+      - "&7Scoreboard: {scoreboard_preview}"
 
+# Menu used to choose PRESET, RGB or GRADIENT for one category.
+selection-type:
+  title: "&8Select Color Type"
+  rows: 3
+  decoration:
+    enabled: false
+  preset:
+    # {current} shows the saved value. {status} becomes selected, available or locked.
+    slot: 11
+    material: LIME_DYE
+    name: "&a&lPRESET COLORS"
+    lore: ["", "&7Select a server preset color.", "", "&7Current: &f{current}", "{status}"]
+  rgb:
+    slot: 13
+    material: FIREWORK_STAR
+    name: "&b&lRGB COLOR"
+    lore: ["", "&7Use any HEX color.", "", "&7Current: &f{current}", "{status}"]
+  gradient:
+    slot: 15
+    material: BLAZE_ROD
+    name: "&d&lGRADIENT"
+    lore: ["", "&7Combine multiple colors.", "", "&7Current: &f{current}", "{status}"]
+  preview:
+    slot: 26
+    material: WRITABLE_BOOK
+    name: "&f&lCURRENT COLOR"
+    lore: ["", "&7Mode: &f{mode}", "&7Value: &f{current}", "", "{preview}"]
+  back:
+    slot: 18
+    material: BARRIER
+    name: "&cBack to Main Menu"
+  reset:
+    # Restores the rank's color for rank/plus, or defaults.name for the player name.
+    slot: 22
+    material: RED_DYE
+    name: "&c&lRESET COLOR"
+    lore: ["", "&7Restore the configured default color.", "", "&eClick to reset."]
+  status:
+    selected: "&a✔ Currently selected"
+    available: "&eClick to configure."
+    locked: "&c✘ Locked"
+
+# Paginated preset list populated from colors.yml.
 preset-menu:
-  title: "&8Colores predefinidos"
+  title: "&8Preset Colors"
   rows: 6
+  # Only these slots are used for colors. Add or remove slots to change page capacity.
   color-slots: [10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34]
-  previous: { slot: 45, material: ARROW, name: "&eAnterior" }
-  back: { slot: 49, material: BARRIER, name: "&cVolver" }
-  next: { slot: 53, material: ARROW, name: "&eSiguiente" }
+  previous: { slot: 45, material: ARROW, name: "&ePrevious" }
+  back: { slot: 49, material: BARRIER, name: "&cBack" }
+  next: { slot: 53, material: ARROW, name: "&eNext" }
   locked-colors:
+    # `show: false` hides presets that the player cannot use.
     show: true
     material: BARRIER
+  color-item:
+    # Available tokens: {display_name}, {preview}, {status}.
+    name: "{display_name}"
+    lore: ["", "&7Preview: {preview}", "", "{status}"]
+  status:
+    selected: "&a✔ SELECTED"
+    available: "&eClick to select."
+    locked: "&c✘ LOCKED"
 
+# Gradient editor. Firework stars are tinted to the real RGB stop colors.
 gradient-menu:
-  title: "&8Crear gradiente"
-  rows: 6
-  color-slots: [19, 21, 23, 25, 31]
-  add: { slot: 33, material: LIME_DYE, name: "&a&l+ AÑADIR COLOR" }
-  preview: { slot: 40, material: PAPER, name: "&f&lVISTA PREVIA" }
-  confirm: { slot: 48, material: LIME_CONCRETE, name: "&a&lCONFIRMAR" }
-  cancel: { slot: 50, material: RED_CONCRETE, name: "&c&lCANCELAR" }
+  title: "&8Create Gradient"
+  rows: 4
+  decoration:
+    enabled: false
+  color-slots:
+    # Layout selected according to the current number of gradient stops.
+    # Add a new row here if custom-colors.gradient.max-colors is increased.
+    2: [10, 16]
+    3: [10, 13, 16]
+    4: [10, 12, 14, 16]
+    5: [10, 11, 13, 15, 16]
+  stop-item:
+    # Available tokens: {index} and {hex}.
+    material: FIREWORK_STAR
+    name: "&lCOLOR #{index}"
+    lore: ["", "&7Current: {hex}", "", "&eLeft-click to change.", "&cRight-click to remove."]
+  # Cyan adds a stop, lime saves the gradient, and the barrier returns without saving.
+  add: { slot: 31, material: CYAN_DYE, name: "&b&lADD COLOR" }
+  confirm: { slot: 35, material: LIME_DYE, name: "&a&lCONFIRM GRADIENT" }
+  cancel: { slot: 27, material: BARRIER, name: "&cBack Without Saving" }
 
+# Shown after a player enters a custom HEX color in chat.
 confirmation:
-  title: "&8Confirmar color RGB"
+  title: "&8Confirm RGB Color"
   rows: 3
   preview: { slot: 13, material: FIREWORK_STAR, name: "&b&l{hex}" }
-  confirm: { slot: 11, material: LIME_CONCRETE, name: "&a&lCONFIRMAR" }
-  cancel: { slot: 15, material: RED_CONCRETE, name: "&c&lCANCELAR" }
+  confirm: { slot: 11, material: LIME_CONCRETE, name: "&a&lCONFIRM" }
+  cancel: { slot: 15, material: RED_CONCRETE, name: "&c&lCANCEL" }
 
+# Sound feedback. Every action can be configured or disabled independently.
+# volume: 1.0 is normal volume. pitch: 1.0 is normal pitch.
+# Example: { enabled: false, sound: UI_BUTTON_CLICK, volume: 0.5, pitch: 1.0 }
+# An invalid sound is ignored safely, but /drc admin validate will report it.
 sounds:
   open: { enabled: true, sound: BLOCK_NOTE_BLOCK_PLING, volume: 0.5, pitch: 1.2 }
+  navigation: { enabled: true, sound: UI_BUTTON_CLICK, volume: 0.5, pitch: 1.1 }
+  input: { enabled: true, sound: BLOCK_NOTE_BLOCK_HAT, volume: 0.6, pitch: 1.4 }
   select: { enabled: true, sound: ENTITY_EXPERIENCE_ORB_PICKUP, volume: 0.6, pitch: 1.5 }
+  confirm: { enabled: true, sound: BLOCK_NOTE_BLOCK_CHIME, volume: 0.7, pitch: 1.3 }
+  cancel: { enabled: true, sound: BLOCK_NOTE_BLOCK_BASS, volume: 0.6, pitch: 0.8 }
+  reset: { enabled: true, sound: BLOCK_NOTE_BLOCK_BASS, volume: 0.7, pitch: 0.6 }
   denied: { enabled: true, sound: ENTITY_VILLAGER_NO, volume: 0.5, pitch: 1.0 }

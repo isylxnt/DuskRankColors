@@ -19,10 +19,14 @@ public final class MessageService {
     }
 
     public Component component(String path, Map<String, String> replacements) {
-        String raw = configs.messages().getString(path, "&cMissing message: " + path);
+        String raw = raw(path);
         Map<String, String> values = new HashMap<>(replacements);
         values.putIfAbsent("prefix", configs.messages().getString("prefix", "&8[&6DuskRankColors&8] "));
         return Text.legacy(Text.replace(raw, values));
+    }
+
+    public String raw(String path) {
+        return configs.messages().getString(path, "&cMissing message: " + path);
     }
 
     public void send(Audience audience, String path) {
